@@ -17,7 +17,7 @@ contract Sha256Tree {
     }
 
     function validateProof() public view returns (bool) {
-
+        
     }
 
     function _computeRoot(bytes32[] memory hashes, uint256 level) internal view returns (bytes32) {

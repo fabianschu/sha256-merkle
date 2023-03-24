@@ -21,28 +21,28 @@ describe("Sha256Tree", function () {
   describe("#computeRoot", function () {
     context("with depth == 1", () => {
       context("with one leaf", () => {
-        const addresses = ["0x44A088e784F2A7936C67D772f9e06dF5093663bF"];
+        const addresses = ["0x9cA70B93CaE5576645F5F069524A9B9c3aef5006"];
 
         it("computes the root", async function () {
           const input = addresses.map((a) => ethers.utils.sha256(a));
           const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
           expect(await sha256Tree.computeRoot(input)).to.equal(
-            "0x1c1b1847bed8b24a5ce52e45c9a8afdae20dfa7ec8c5bd2c6676ba55c3039c48"
+            "0xe3cc7ac25cd11219bb431502204340dd0734da5d5e7019af84079f60a55879d2"
           );
         });
       });
 
       context("with two leafs", () => {
         const addresses = [
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
         ];
 
         it("computes the root", async function () {
           const input = addresses.map((a) => ethers.utils.sha256(a));
           const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
           expect(await sha256Tree.computeRoot(input)).to.equal(
-            "0x8c61c713c399eb3228b3fc48261c9b183fb30684a5679442673468804f7500de"
+            "0xd8b941c56b2f621dc0e60fdd35dac4f52ccadaa1192f81c34f7845f55e1f832e"
           );
         });
       });
@@ -51,33 +51,33 @@ describe("Sha256Tree", function () {
     context("with depth == 2", () => {
       context("with three leafs", () => {
         const addresses = [
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
         ];
 
         it("computes the root", async function () {
           const input = addresses.map((a) => ethers.utils.hexZeroPad(a, 32));
           const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
           expect(await sha256Tree.computeRoot(input)).to.equal(
-            "0x794a29f5e1f06a1ace92c4ea6bb75ca2a621d335b60e715d418164d83027e832"
+            "0xbdbc2d407d5ef40d737647573bf564683cc99f82e3cabac6082baa2a5f2d43e9"
           );
         });
       });
 
       context("with four leafs", () => {
         const addresses = [
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
         ];
 
         it("computes the root", async function () {
           const input = addresses.map((a) => ethers.utils.hexZeroPad(a, 32));
           const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
           expect(await sha256Tree.computeRoot(input)).to.equal(
-            "0x7ea88910affd0d2c31ac6ae25ba66b3af2f2477d95be0b17c205764377c28be4"
+            "0x1fb1159ac16ad057cf38bcc9a82f907e9c8de6d8db2fc72381c8bad02155a065"
           );
         });
       });
@@ -86,42 +86,44 @@ describe("Sha256Tree", function () {
     context("with depth == 3", () => {
       context("with five leafs", () => {
         const addresses = [
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
         ];
 
         it("computes the root", async function () {
           const input = addresses.map((a) => ethers.utils.hexZeroPad(a, 32));
           const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
           expect(await sha256Tree.computeRoot(input)).to.equal(
-            "0x2b430b9881644ff1ef82a98cc4b115d10f3c1e7158b6adbfa5366353a247a653"
+            "0x2fad0b370d2db540310b20d0449e8acdde3d6ee0801cbb506796ec37ceef1ded"
           );
         });
       });
 
       context("with six leafs", () => {
         const addresses = [
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
-          "0x44A088e784F2A7936C67D772f9e06dF5093663bF",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+          "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
         ];
 
         it("computes the root", async function () {
           const input = addresses.map((a) => ethers.utils.hexZeroPad(a, 32));
           const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
           expect(await sha256Tree.computeRoot(input)).to.equal(
-            "0xa564552f8369b29b160a4871c5db6c600b69f0b60b25e018cc720ef49bb9db7d"
+            "0x743eeea527b92fb6cee4816e6bda3aa8ae34ec471c8d37a63d3120537a864515"
           );
         });
       });
     });
   });
 
-  describe("#validateProof", () => {});
+  describe("#validateProof", () => {
+    // const addresses =
+  });
 });
