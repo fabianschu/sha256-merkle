@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
+import "hardhat/console.sol";
+
 contract Sha256Tree {
     uint256 constant depth = 5;
 
-    bytes32 constant level0 = 0xf5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b; //leaf
+    bytes32 constant level0 = 0xf5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b; // two empty leaf siblings produce this hash
     bytes32 constant level1 = 0xdb56114e00fdd4c1f85c892bf35ac9a89289aaecb1ebd0a96cde606a748b5d71;
     bytes32 constant level2 = 0xc78009fdf07fc56a11f122370658a353aaa542ed63e44c4bc15ff4cd105ab33c;
     bytes32 constant level3 = 0x536d98837f2dd165a55d5eeae91485954472d56f246df256bf3cae19352a123c;
@@ -17,7 +19,7 @@ contract Sha256Tree {
     }
 
     function validateProof() public view returns (bool) {
-        
+
     }
 
     function _computeRoot(bytes32[] memory hashes, uint256 level) internal view returns (bytes32) {
