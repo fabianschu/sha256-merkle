@@ -6,6 +6,7 @@ const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 const { generateTree, Tree } = require("./utils/tree.js");
+const { sha256 } = require("ethers/lib/utils.js");
 
 describe("Sha256Tree", function () {
   // We define a fixture to reuse the same setup in every test.
@@ -100,7 +101,7 @@ describe("Sha256Tree", function () {
         });
       });
 
-      context.only("with six leafs", () => {
+      context("with six leafs", () => {
         const addresses = [
           "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
           "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
@@ -128,7 +129,8 @@ describe("Sha256Tree", function () {
   //     ];
 
   //     it("validates the proof", async () => {
-  //       const tree = generateTree(addresses);
+  //       const tree = new Tree(addresses);
+  //       // tree.getProof(addresses[1]);
   //     });
   //   });
   // });

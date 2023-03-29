@@ -1,57 +1,72 @@
 const { ethers } = require("ethers");
+const { sha256, solidityPack } = require("ethers/lib/utils");
 
 class Tree {
-  abiCoder = new ethers.utils.AbiCoder();
   depth = 5;
-  cachedHashes = [
-    "0xf5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b",
-    "0xdb56114e00fdd4c1f85c892bf35ac9a89289aaecb1ebd0a96cde606a748b5d71",
-    "0xc78009fdf07fc56a11f122370658a353aaa542ed63e44c4bc15ff4cd105ab33c",
-    "0x536d98837f2dd165a55d5eeae91485954472d56f246df256bf3cae19352a123c",
-  ];
 
   constructor(addresses) {
     this.addresses = addresses;
-    this.hashedAddresses = addresses.map((a) => ethers.utils.sha256(a));
+    this.leafs = [
+      ...addresses.map((a) => ethers.utils.sha256(a)),
+      ...new Array(2 ** this.depth - addresses.length).fill(
+        sha256(ethers.utils.hexlify([]))
+      ),
+    ];
     this.layers = this.getLayers();
     this.root = this.layers[this.layers.length - 1][0];
   }
 
-  getLayers(nodes = this.hashedAddresses, currentLevel = 0, layers = []) {
-    const copy = [...layers];
-
-    copy.push(nodes);
-    if (nodes.length === 1 && currentLevel === this.depth - 1) {
-      return copy;
-    }
-
-    let left;
-    let right;
-    let nextLevel = [];
-    for (let i = 0; i < nodes.length; i += 2) {
-      left = nodes[i];
-      if (i === nodes.length - 1 && nodes.length % 2 !== 0) {
-        // we're at last node in a layer and left node has
-        // no right sibling, so we insert a cached value
-        right = ethers.utils.solidityPack(
-          ["bytes32"],
-          [this.cachedHashes[currentLevel]]
-        );
-      } else {
-        right = nodes[i + 1];
+  getLayers() {
+    const layers = [this.leafs];
+    for (let i = 0; i < this.depth; i++) {
+      const currentLevel = layers[i];
+      const nextLevel = [];
+      for (let j = 0; j < currentLevel.length; j += 2) {
+        const left = currentLevel[j];
+        const right = currentLevel[j + 1];
+        const hash = this.getConcatHash(left, right);
+        nextLevel.push(hash);
       }
-      const concatenated = ethers.utils.solidityPack(
-        ["bytes32", "bytes32"],
-        [left, right]
-      );
+      layers.push(nextLevel);
+    }
+    return layers;
+  }
 
-      const hashed = ethers.utils.sha256(concatenated);
-      nextLevel.push(hashed);
+  getProof(address) {
+    const proof = [];
+
+    const leafIndex = this.addresses.findIndex((el) => el === address);
+    const leafPosition = (leafIndex + 10) % 2 === 0 ? "left" : "right";
+    if (leafPosition === "left") {
+      proof.push({ value: this.hashedAddresses[leafIndex + 1], position: 1 });
+    } else {
+      proof.push({ value: this.hashedAddresses[leafIndex - 1], position: 0 });
     }
 
-    const next = currentLevel + 1;
-    return this.getLayers(nextLevel, next, copy);
+    for (let i = 1; i < this.depth; i++) {
+      if (leafPosition === "left") {
+        proof.push({ value: this.hashedAddresses[leafIndex + 1], position: 1 });
+      } else {
+        proof.push({ value: this.hashedAddresses[leafIndex - 1], position: 0 });
+      }
+    }
+    // const concatenatedPair = ethers.utils.solidityPack(
+    //   ["bytes32", "bytes32"],
+    //   leafPosition === "left"
+    //     ? [this.hashedAddresses[leafIndex], this.hashedAddresses[leafIndex + 1]]
+    //     : [this.hashedAddresses[leafIndex - 1], this.hashedAddresses[leafIndex]]
+    // );
+  }
+
+  getConcatHash(left, right) {
+    return sha256(
+      ethers.utils.solidityPack(["bytes32", "bytes32"], [left, right])
+    );
+  }
+
+  getHash(left, right) {
+    return ethers.utils.solidityPack(["bytes32", "bytes32"], [left, right]);
   }
 }
 
-module.exports = { generateTree, Tree };
+module.exports = { Tree };

@@ -6,10 +6,21 @@ import "hardhat/console.sol";
 contract Sha256Tree {
     uint256 constant depth = 5;
 
-    bytes32 constant level0 = 0xf5a5fd42d16a20302798ef6ed309979b43003d2320d9f0e8ea9831a92759fb4b; // two empty leaf siblings produce this hash
-    bytes32 constant level1 = 0xdb56114e00fdd4c1f85c892bf35ac9a89289aaecb1ebd0a96cde606a748b5d71;
-    bytes32 constant level2 = 0xc78009fdf07fc56a11f122370658a353aaa542ed63e44c4bc15ff4cd105ab33c;
-    bytes32 constant level3 = 0x536d98837f2dd165a55d5eeae91485954472d56f246df256bf3cae19352a123c;
+    bytes32 constant level0 = 0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855; // sha256("")
+    bytes32 constant level1 = 0x2dba5dbc339e7316aea2683faf839c1b7b1ee2313db792112588118df066aa35; // two empty leaf siblings produce this hash
+    bytes32 constant level2 = 0x5310a330e8f970388503c73349d80b45cd764db615f1bced2801dcd4524a2ff4;
+    bytes32 constant level3 = 0x80d1bf4dd6c1f75bba022337a3f0842078f5c2e7f3f59dfd33ccbb8e963367b2;
+    bytes32 constant level4 = 0x1492e66e89e186840231850712161255d203b5bbf48d21242f0b51519b5eb3d4;
+
+    enum Position {
+        left,
+        right
+    }
+
+    struct HashNode {
+        bytes32 value;
+        Position position; 
+    }
 
     
     constructor() {}
@@ -18,14 +29,10 @@ contract Sha256Tree {
         return _computeRoot(hashes, 0);
     }
 
-    function validateProof() public view returns (bool) {
-
-    }
-
     function _computeRoot(bytes32[] memory hashes, uint256 level) internal view returns (bytes32) {
+        if (level == depth) return hashes[0];
+        
         uint256 length = hashes.length;
-        if (length == 1 && level == depth - 1) return hashes[0];
-
         uint256 newLength = length % 2 == 0 ? length / 2 : (length + 1) / 2;
         bytes32[] memory nextLevel = new bytes32[](newLength);
         
@@ -52,6 +59,11 @@ contract Sha256Tree {
         if(level == 0) return level0; // empty leaf pair
         else if(level == 1) return level1;
         else if(level == 2) return level2;
-        else return level3;
+        else if(level == 3) return level3;
+        else return level4;
+    }
+
+    function verifyProof(uint256 index, bytes32 leaf, HashNode[] memory nodes) external pure returns (bool) {
+
     }
 }
