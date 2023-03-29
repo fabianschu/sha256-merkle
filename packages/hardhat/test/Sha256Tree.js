@@ -121,17 +121,36 @@ describe("Sha256Tree", function () {
     });
   });
 
-  // describe("#validateProof", () => {
-  //   context("with two leafs", () => {
-  //     const addresses = [
-  //       "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
-  //       "0xb5aE5169F4D750e802884d81b4f9eC66c525396F",
-  //     ];
+  describe("#validateProof", () => {
+    context("with two leafs", () => {
+      const addresses = [
+        "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+        "0xb5aE5169F4D750e802884d81b4f9eC66c525396F",
+      ];
 
-  //     it("validates the proof", async () => {
-  //       const tree = new Tree(addresses);
-  //       // tree.getProof(addresses[1]);
-  //     });
-  //   });
-  // });
+      it("validates the proof", async () => {
+        const tree = new Tree(addresses);
+        const merkleProof = tree.getProof(addresses[1]);
+        const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
+        const root = await sha256Tree.verifyProof(tree.leafs[1], merkleProof);
+        expect(root).to.equal(tree.root);
+      });
+    });
+
+    context("with three leafs", () => {
+      const addresses = [
+        "0x9cA70B93CaE5576645F5F069524A9B9c3aef5006",
+        "0xb5aE5169F4D750e802884d81b4f9eC66c525396F",
+        "0xC669b3107e1e8c1883335d34e635f1BcE6DA9dAb",
+      ];
+
+      it("validates the proof", async () => {
+        const tree = new Tree(addresses);
+        const merkleProof = tree.getProof(addresses[2]);
+        const { sha256Tree } = await loadFixture(deployOneYearLockFixture);
+        const root = await sha256Tree.verifyProof(tree.leafs[2], merkleProof);
+        expect(root).to.equal(tree.root);
+      });
+    });
+  });
 });

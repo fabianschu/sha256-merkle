@@ -33,29 +33,28 @@ class Tree {
   }
 
   getProof(address) {
-    const proof = [];
+    const merkleProof = [];
+    let currentIndex = this.addresses.findIndex((el) => el === address);
 
-    const leafIndex = this.addresses.findIndex((el) => el === address);
-    const leafPosition = (leafIndex + 10) % 2 === 0 ? "left" : "right";
-    if (leafPosition === "left") {
-      proof.push({ value: this.hashedAddresses[leafIndex + 1], position: 1 });
-    } else {
-      proof.push({ value: this.hashedAddresses[leafIndex - 1], position: 0 });
+    for (const layer of this.layers) {
+      if (layer.length === 1) break;
+      const nodeSide = this.getNodeSide(currentIndex);
+      const siblingSide = Math.abs(nodeSide - 1);
+      merkleProof.push({
+        value:
+          nodeSide === 1 ? layer[currentIndex - 1] : layer[currentIndex + 1],
+        position: siblingSide,
+      });
+      currentIndex = Math.floor(currentIndex / 2);
     }
 
-    for (let i = 1; i < this.depth; i++) {
-      if (leafPosition === "left") {
-        proof.push({ value: this.hashedAddresses[leafIndex + 1], position: 1 });
-      } else {
-        proof.push({ value: this.hashedAddresses[leafIndex - 1], position: 0 });
-      }
-    }
-    // const concatenatedPair = ethers.utils.solidityPack(
-    //   ["bytes32", "bytes32"],
-    //   leafPosition === "left"
-    //     ? [this.hashedAddresses[leafIndex], this.hashedAddresses[leafIndex + 1]]
-    //     : [this.hashedAddresses[leafIndex - 1], this.hashedAddresses[leafIndex]]
-    // );
+    return merkleProof;
+  }
+
+  getNodeSide(nodeIdx) {
+    // 0 => left
+    // 1 => right
+    return (nodeIdx + 10) % 2 === 0 ? 0 : 1;
   }
 
   getConcatHash(left, right) {

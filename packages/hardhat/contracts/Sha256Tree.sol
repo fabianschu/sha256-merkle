@@ -63,7 +63,21 @@ contract Sha256Tree {
         else return level4;
     }
 
-    function verifyProof(uint256 index, bytes32 leaf, HashNode[] memory nodes) external pure returns (bool) {
-
+    function verifyProof(bytes32 node, HashNode[] memory proof) external view returns (bytes32 tmpNode) {
+        tmpNode = node;
+        for (uint256 i = 0; i < proof.length; i++) {
+            HashNode memory sibling = proof[i];
+            bytes32 left;
+            bytes32 right;
+            if(sibling.position == Position.left) {
+                right = tmpNode;
+                left = sibling.value;
+            } else {
+                right = sibling.value;
+                left = tmpNode;
+            }
+            tmpNode = sha256(abi.encodePacked(left, right));
+        }
+        return tmpNode;
     }
 }
